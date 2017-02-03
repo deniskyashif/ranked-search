@@ -6,18 +6,17 @@
     using System.Collections.Generic;
     using System.IO;
     using Iveonik.Stemmers;
+    using RankedSearch.Tokenizers;
 
     public class SearchEngine
     {
-        private readonly IStemmer Stemmer;
+        private readonly ITokenizer Tokenizer;
+        private IEnumerable<Document> Documents;
 
         public SearchEngine(IStemmer stemmer)
         {
-            this.Documents = new List<Document>();
-            this.Stemmer = stemmer;
+            this.Tokenizer = new Tokenizer(stemmer);
         }
-        
-        public IEnumerable<Document> Documents { get; private set; }
 
         public void LoadDocuments(string directoryPath)
         {
@@ -28,13 +27,6 @@
                 result.AddRange(JsonConvert.DeserializeObject<IEnumerable<Document>>(
                     File.ReadAllText(filePath)));
             });
-
-            this.Documents = result;
-        }
-
-        private string Stem(string word)
-        {
-            return this.Stemmer.Stem(word);
         }
     }
 }

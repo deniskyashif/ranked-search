@@ -3,15 +3,16 @@
     using Iveonik.Stemmers;
     using RankedSearch;
     using System;
+    using System.Configuration;
 
     class Program
     {
         static void Main(string[] args)
         {
-            var corpusPath = @"D:\Workspace\RankedSearch\corpora\reuters-21578-json\data\justTen";
+            var corpusDirectory = ConfigurationManager.AppSettings["corpusDirectory"];
             
             var engine = new SearchEngine(new EnglishStemmer());
-            engine.LoadDocuments(corpusPath);
+            engine.LoadDocuments(corpusDirectory);
         }
     }
 }

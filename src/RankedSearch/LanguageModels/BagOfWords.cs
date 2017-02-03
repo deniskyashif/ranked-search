@@ -1,6 +1,9 @@
 ﻿namespace RankedSearch.LanguageModels
 {
     using Extensions;
+    using RankedSearch;
+    using RankedSearch.Tokenizers;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -10,22 +13,24 @@
     public class BagOfWords
     {
         private readonly IDictionary<string, double> Distribution;
+        private readonly ITokenizer Tokenizer;
 
-        public BagOfWords(IEnumerable<string> tokens)
+        public BagOfWords(string text, ITokenizer tokenizer)
         {
-            this.Distribution = this.InferDistribution(tokens);
+            this.Tokenizer = tokenizer;
+            this.Distribution = this.InferDistribution(this.Tokenizer.Tokenize(text));
         }
 
         public double Query(string text)
         {
-            if (this.Distribution.ContainsKey(text))
-            {
-                return this.Distribution[text];
-            }
+            text = this.Tokenizer.NormalizeToken(text);
 
+            if (this.Distribution.ContainsKey(text))
+                return this.Distribution[text];
+            
             return 0;
         }
-
+        
         private IDictionary<string, double> InferDistribution(IEnumerable<string> tokens)
         {
             var counts = new Dictionary<string, double>();
