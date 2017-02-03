@@ -9,6 +9,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RankedSearch", "RankedSearc
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Extensions", "Extensions\Extensions.csproj", "{9DA21E54-3E81-4C2F-8C67-3CC2FA2B9235}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RankedSearch.Tests", "RankedSearch.Tests\RankedSearch.Tests.csproj", "{E523C524-51FF-483D-B7D9-886BF65874CC}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -55,6 +57,18 @@ Global
 		{9DA21E54-3E81-4C2F-8C67-3CC2FA2B9235}.Release|x64.Build.0 = Release|Any CPU
 		{9DA21E54-3E81-4C2F-8C67-3CC2FA2B9235}.Release|x86.ActiveCfg = Release|Any CPU
 		{9DA21E54-3E81-4C2F-8C67-3CC2FA2B9235}.Release|x86.Build.0 = Release|Any CPU
+		{E523C524-51FF-483D-B7D9-886BF65874CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E523C524-51FF-483D-B7D9-886BF65874CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E523C524-51FF-483D-B7D9-886BF65874CC}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{E523C524-51FF-483D-B7D9-886BF65874CC}.Debug|x64.Build.0 = Debug|Any CPU
+		{E523C524-51FF-483D-B7D9-886BF65874CC}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{E523C524-51FF-483D-B7D9-886BF65874CC}.Debug|x86.Build.0 = Debug|Any CPU
+		{E523C524-51FF-483D-B7D9-886BF65874CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E523C524-51FF-483D-B7D9-886BF65874CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E523C524-51FF-483D-B7D9-886BF65874CC}.Release|x64.ActiveCfg = Release|Any CPU
+		{E523C524-51FF-483D-B7D9-886BF65874CC}.Release|x64.Build.0 = Release|Any CPU
+		{E523C524-51FF-483D-B7D9-886BF65874CC}.Release|x86.ActiveCfg = Release|Any CPU
+		{E523C524-51FF-483D-B7D9-886BF65874CC}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -32,7 +32,7 @@
             this.Documents = result;
         }
 
-        public string GetStem(string word)
+        private string Stem(string word)
         {
             return this.Stemmer.Stem(word);
         }

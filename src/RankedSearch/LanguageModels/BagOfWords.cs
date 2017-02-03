@@ -7,7 +7,7 @@
     /// <summary>
     /// Represents an Unigram Language Model
     /// </summary>
-    internal class BagOfWords
+    public class BagOfWords
     {
         private readonly IDictionary<string, double> Distribution;
 
@@ -28,18 +28,20 @@
 
         private IDictionary<string, double> InferDistribution(IEnumerable<string> tokens)
         {
-            var distribution = new Dictionary<string, double>();
+            var counts = new Dictionary<string, double>();
 
             tokens.ForEach(token =>
             {
-                if (!distribution.ContainsKey(token))
-                    distribution.Add(token, 1);
+                if (!counts.ContainsKey(token))
+                    counts.Add(token, 0);
                 
-                distribution[token]++;
+                counts[token]++;
             });
 
-            var tokenCount = tokens.Count();
-            distribution.ForEach(pair => distribution[pair.Key] = pair.Value / tokenCount);
+            var totalCount = tokens.Count();
+            var distribution = new Dictionary<string, double>();
+
+            counts.ForEach(pair => distribution.Add(pair.Key, pair.Value / totalCount));
 
             return distribution;
         }
