@@ -10,7 +10,7 @@
     /// <summary>
     /// Represents an Unigram Language Model
     /// </summary>
-    public class BagOfWords
+    public class BagOfWords: ILanguageModel
     {
         private readonly IDictionary<string, double> Distribution;
         private readonly ITokenizer Tokenizer;

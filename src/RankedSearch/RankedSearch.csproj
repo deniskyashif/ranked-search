@@ -47,8 +47,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Document.cs" />
+    <Compile Include="Poco\Document.cs" />
     <Compile Include="LanguageModels\BagOfWords.cs" />
+    <Compile Include="LanguageModels\ILanguageModel.cs" />
+    <Compile Include="Poco\SearchResult.cs" />
     <Compile Include="Tokenizers\ITokenizer.cs" />
     <Compile Include="Tokenizers\Tokenizer.cs" />
     <Compile Include="SearchEngine.cs" />

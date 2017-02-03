@@ -1,5 +1,6 @@
 ﻿namespace RankedSearch
 {
+    using RankedSearch.LanguageModels;
     using System;
     using System.Collections.Generic;
     using System.Text;
@@ -17,5 +18,7 @@
         public IEnumerable<string> Topics { get; set; }
 
         public IEnumerable<string> Places { get; set; }
+
+        public ILanguageModel Model { get; set; }
     }
 }
