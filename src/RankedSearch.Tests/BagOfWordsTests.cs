@@ -3,8 +3,6 @@ namespace RankedSearch.Tests
     using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using RankedSearch.LanguageModels;
-    using Iveonik.Stemmers;
-    using RankedSearch.Tokenizers;
 
     [TestClass]
     public class BagOfWordsTests

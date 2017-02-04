@@ -1,22 +1,27 @@
 ﻿namespace RankedSearch
 {
     using Extensions;
+    using Iveonik.Stemmers;
     using Newtonsoft.Json;
+    using RankedSearch.LanguageModels;
+    using RankedSearch.Poco;
+    using RankedSearch.Tokenizers;
     using System;
     using System.Collections.Generic;
     using System.IO;
-    using Iveonik.Stemmers;
-    using RankedSearch.Tokenizers;
-    using RankedSearch.Poco;
+    using System.Linq;
 
     public class SearchEngine
     {
-        private readonly ITokenizer Tokenizer;
+        private readonly ITokenizer tokenizer;
         private IEnumerable<Document> documents;
 
         public SearchEngine(IStemmer stemmer)
         {
-            this.Tokenizer = new StemmingTokenizer(stemmer);
+            if (stemmer == null)
+                throw new NullReferenceException("Stemmer cannot be null.");
+
+            this.tokenizer = new StemmingTokenizer(stemmer);
         }
 
         public void LoadDocuments(string directoryPath)
@@ -25,8 +30,13 @@
 
             Directory.EnumerateFiles(directoryPath).ForEach(filePath =>
             {
-                result.AddRange(JsonConvert.DeserializeObject<IEnumerable<Document>>(
-                    File.ReadAllText(filePath)));
+                result.AddRange(
+                    JsonConvert.DeserializeObject<IEnumerable<Document>>(File.ReadAllText(filePath))
+                    .Select(doc => 
+                    {
+                        doc.Model = new BagOfWords(this.tokenizer.Tokenize(doc.Body));
+                        return doc;
+                    }));
             });
         }
 

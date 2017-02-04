@@ -7,19 +7,19 @@
     /// <summary>
     /// Represents an Unigram Language Model
     /// </summary>
-    public class BagOfWords: ILanguageModel
+    public class BagOfWords : ILanguageModel
     {
-        private readonly IDictionary<string, double> Distribution;
+        private readonly IDictionary<string, double> distribution;
         
         public BagOfWords(IEnumerable<string> text)
         {
-            this.Distribution = this.InferDistribution(text);
+            this.distribution = this.InferDistribution(text);
         }
 
         public double Query(string phrase)
         {
-            if (this.Distribution.ContainsKey(phrase))
-                return this.Distribution[phrase];
+            if (this.distribution.ContainsKey(phrase))
+                return this.distribution[phrase];
             
             return 0;
         }

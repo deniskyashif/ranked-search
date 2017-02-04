@@ -5,13 +5,13 @@
     using System.Collections.Generic;
     using System.Linq;
         
-    public class StemmingTokenizer: ITokenizer
+    public class StemmingTokenizer : ITokenizer
     {
-        private readonly IStemmer Stemmer;
+        private readonly IStemmer stemmer;
 
         public StemmingTokenizer(IStemmer stemmer)
         {
-            this.Stemmer = stemmer;
+            this.stemmer = stemmer;
         }
         
         public IEnumerable<string> Tokenize(string text)
@@ -28,7 +28,7 @@
         /// <returns>The normalized token as string</returns>
         public string NormalizeToken(string token)
         {
-            return this.Stemmer.Stem(token.ToLower());
+            return this.stemmer.Stem(token.ToLower());
         }
     }
 }
