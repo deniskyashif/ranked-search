@@ -16,7 +16,7 @@
 
         public SearchEngine(IStemmer stemmer)
         {
-            this.Tokenizer = new Tokenizer(stemmer);
+            this.Tokenizer = new StemmingTokenizer(stemmer);
         }
 
         public void LoadDocuments(string directoryPath)

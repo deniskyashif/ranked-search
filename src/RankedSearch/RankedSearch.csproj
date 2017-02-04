@@ -52,7 +52,7 @@
     <Compile Include="LanguageModels\ILanguageModel.cs" />
     <Compile Include="Poco\SearchResult.cs" />
     <Compile Include="Tokenizers\ITokenizer.cs" />
-    <Compile Include="Tokenizers\Tokenizer.cs" />
+    <Compile Include="Tokenizers\StemmingTokenizer.cs" />
     <Compile Include="SearchEngine.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

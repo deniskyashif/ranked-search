@@ -5,11 +5,11 @@
     using System.Collections.Generic;
     using System.Linq;
         
-    public class Tokenizer: ITokenizer
+    public class StemmingTokenizer: ITokenizer
     {
         private readonly IStemmer Stemmer;
 
-        public Tokenizer(IStemmer stemmer)
+        public StemmingTokenizer(IStemmer stemmer)
         {
             this.Stemmer = stemmer;
         }
@@ -21,6 +21,11 @@
                 .Select(this.NormalizeToken);
         }
 
+        /// <summary>
+        /// Infers the least weighted grammatical form of a token(word)
+        /// </summary>
+        /// <param name="token">The input token as string</param>
+        /// <returns>The normalized token as string</returns>
         public string NormalizeToken(string token)
         {
             return this.Stemmer.Stem(token.ToLower());

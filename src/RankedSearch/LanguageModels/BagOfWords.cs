@@ -1,9 +1,6 @@
 ﻿namespace RankedSearch.LanguageModels
 {
     using Extensions;
-    using RankedSearch;
-    using RankedSearch.Tokenizers;
-    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -13,20 +10,16 @@
     public class BagOfWords: ILanguageModel
     {
         private readonly IDictionary<string, double> Distribution;
-        private readonly ITokenizer Tokenizer;
-
-        public BagOfWords(string text, ITokenizer tokenizer)
+        
+        public BagOfWords(IEnumerable<string> text)
         {
-            this.Tokenizer = tokenizer;
-            this.Distribution = this.InferDistribution(this.Tokenizer.Tokenize(text));
+            this.Distribution = this.InferDistribution(text);
         }
 
-        public double Query(string text)
+        public double Query(string phrase)
         {
-            text = this.Tokenizer.NormalizeToken(text);
-
-            if (this.Distribution.ContainsKey(text))
-                return this.Distribution[text];
+            if (this.Distribution.ContainsKey(phrase))
+                return this.Distribution[phrase];
             
             return 0;
         }

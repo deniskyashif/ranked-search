@@ -2,6 +2,6 @@
 {
     public interface ILanguageModel
     {
-        double Query(string text);
+        double Query(string phrase);
     }
 }
