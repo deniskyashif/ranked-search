@@ -60,6 +60,7 @@
     <Compile Include="BagOfWordsTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SearchEngineTests.cs" />
+    <Compile Include="EnglishStemmerTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
