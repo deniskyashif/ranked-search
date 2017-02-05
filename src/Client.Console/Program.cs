@@ -26,7 +26,7 @@
 
                 Console.WriteLine(result.Document.Title);
                 Console.WriteLine($"Relevance Score: {result.RelevanceScore}");
-                //Console.WriteLine($"Content: {Environment.NewLine}{result.Document.Body}");
+                Console.WriteLine($"Content: {Environment.NewLine}{result.Document.Body}");
             }
         }
     }

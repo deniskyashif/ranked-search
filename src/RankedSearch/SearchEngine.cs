@@ -10,8 +10,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Text;
-
+    
     public class SearchEngine
     {
         private readonly ITokenizer tokenizer;
@@ -56,16 +55,37 @@
             
             var firstDocument = this.documents.First();
             var bestMatch = new SearchResult(firstDocument, this.CalculateRelevanceScore(queryTerms, firstDocument));
-            
-            foreach (var document in this.documents.Skip(1))
+
+            this.documents.Skip(1).ForEach(doc =>
             {
-                var relevanceScore = this.CalculateRelevanceScore(queryTerms, document);
+                var relevanceScore = this.CalculateRelevanceScore(queryTerms, doc);
 
                 if (relevanceScore > bestMatch.RelevanceScore)
-                    bestMatch = new SearchResult(document, relevanceScore);
-            }
-
+                    bestMatch = new SearchResult(doc, relevanceScore);
+            });
+            
             return bestMatch;
+        }
+
+        private double CalculateLogProbabilityRelevanceScore(IEnumerable<string> queryTerms, Document document)
+        {
+            double smoothingCoefficient = 0.5;
+            double unknownWordPenalty = -10;
+
+            var similariy = queryTerms.Aggregate<string, double>(0, (sum, term) =>
+            {
+                var probability = ((1 - smoothingCoefficient) * document.Model.Query(term)) +
+                    smoothingCoefficient * this.corpusLanguageModel.Query(term);
+
+                if (probability > 0)
+                    sum += Math.Log(probability);
+                else
+                    sum += unknownWordPenalty;
+                
+                return sum;
+            });
+
+            return similariy;
         }
 
         private double CalculateRelevanceScore(IEnumerable<string> queryTerms, Document document)
@@ -74,8 +94,8 @@
 
             var similariy = queryTerms.Aggregate<string, double>(1, (product, term) =>
             {
-                product = ((1 - smoothingCoefficient) * document.Model.Query(term)) +
-                    smoothingCoefficient * corpusLanguageModel.Query(term);
+                product *= ((1 - smoothingCoefficient) * document.Model.Query(term)) +
+                    smoothingCoefficient * this.corpusLanguageModel.Query(term);
 
                 return product;
             });

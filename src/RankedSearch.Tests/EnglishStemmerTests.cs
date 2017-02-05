@@ -1,14 +1,8 @@
-﻿using System;
-using System.Text;
-using System.Collections.Generic;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Iveonik.Stemmers;
-
-namespace RankedSearch.Tests
+﻿namespace RankedSearch.Tests
 {
-    /// <summary>
-    /// Summary description for UnitTest1
-    /// </summary>
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using Iveonik.Stemmers;
+    
     [TestClass]
     public class EnglishStemmerTests
     {
