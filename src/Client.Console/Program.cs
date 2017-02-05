@@ -16,6 +16,18 @@
 
             Console.WriteLine("Loading the documents...");
             engine.LoadDocuments(corpusDirectory);
+            
+            while (true)
+            {
+                Console.Write(">_ ");
+
+                var input = Console.ReadLine();
+                var result = engine.Search(input);
+
+                Console.WriteLine(result.Document.Title);
+                Console.WriteLine($"Relevance Score: {result.RelevanceScore}");
+                //Console.WriteLine($"Content: {Environment.NewLine}{result.Document.Body}");
+            }
         }
     }
 }

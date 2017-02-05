@@ -2,8 +2,14 @@
 {
     public class SearchResult
     {
-        public Document Document { get; set; }
+        public SearchResult(Document document, double score)
+        {
+            this.Document = document;
+            this.RelevanceScore = score;
+        }
 
-        public double RelevanceScore { get; set; }
+        public Document Document { get; private set; }
+
+        public double RelevanceScore { get; private set; }
     }
 }

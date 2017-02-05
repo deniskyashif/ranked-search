@@ -8,7 +8,9 @@
     public class StemmingTokenizer : ITokenizer
     {
         private readonly IStemmer stemmer;
-
+        private readonly string[] separators = new string[] 
+            { " ", "\t", ",", ".", "?", "!", ":", Environment.NewLine };
+        
         public StemmingTokenizer(IStemmer stemmer)
         {
             this.stemmer = stemmer;
@@ -17,7 +19,7 @@
         public IEnumerable<string> Tokenize(string text)
         {
             return text
-                .Split(new[] { ' ' }, StringSplitOptions.RemoveEmptyEntries)
+                .Split(separators, StringSplitOptions.RemoveEmptyEntries)
                 .Select(this.NormalizeToken);
         }
 
