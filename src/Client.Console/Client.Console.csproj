@@ -55,6 +55,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Extensions\Extensions.csproj">
+      <Project>{9da21e54-3e81-4c2f-8c67-3cc2fa2b9235}</Project>
+      <Name>Extensions</Name>
+    </ProjectReference>
     <ProjectReference Include="..\RankedSearch\RankedSearch.csproj">
       <Project>{1eb6b70d-b83d-4f93-8015-f7fe108aa60a}</Project>
       <Name>RankedSearch</Name>

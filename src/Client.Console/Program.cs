@@ -4,12 +4,13 @@
     using RankedSearch;
     using System;
     using System.Configuration;
+    using Extensions;
 
     public class Program
     {
         public static void Main()
         {
-            var corpusDirectory = ConfigurationManager.AppSettings["corpusDirectory"];
+            var corpusDirectory = ConfigurationManager.AppSettings["corpusPath"];
 
             Console.WriteLine("Creating the search engine...");
             var engine = new SearchEngine(new EnglishStemmer());
@@ -20,13 +21,16 @@
             while (true)
             {
                 Console.Write(">_ ");
-
+                
                 var input = Console.ReadLine();
-                var result = engine.Search(input);
+                var result = engine.Search(input, 3);
 
-                Console.WriteLine(result.Document.Title);
-                Console.WriteLine($"Relevance Score: {result.RelevanceScore}");
-                Console.WriteLine($"Content: {Environment.NewLine}{result.Document.Body}");
+                result.ForEach(doc =>
+                {
+                    Console.WriteLine(doc.Document.Title);
+                    Console.WriteLine($"Relevance Score: {doc.RelevanceScore}");
+                    Console.WriteLine($"Body: {Environment.NewLine}{doc.Document.Body}");
+                });
             }
         }
     }

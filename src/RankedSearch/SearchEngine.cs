@@ -10,7 +10,7 @@
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    
+
     public class SearchEngine
     {
         private readonly ITokenizer tokenizer;
@@ -37,9 +37,9 @@
                     .Where(doc => doc.Body != null && doc.Body.Length > 0)
                     .Select(doc =>
                     {
-                        var tokeinzedDocumentBody = this.tokenizer.Tokenize(doc.Body);
-                        doc.Model = new BagOfWords(tokeinzedDocumentBody);
-                        corpusText.AddRange(tokeinzedDocumentBody);
+                        var tokeinzedDocumentContent = this.tokenizer.Tokenize($"{doc.Title} {doc.Body}");
+                        doc.Model = new BagOfWords(tokeinzedDocumentContent);
+                        corpusText.AddRange(tokeinzedDocumentContent);
 
                         return doc;
                     }));
@@ -49,43 +49,15 @@
             this.corpusLanguageModel = new BagOfWords(corpusText);
         }
 
-        public SearchResult Search(string query, int limit = 5)
+        public IEnumerable<SearchResult> Search(string query, int limit = 5)
         {
             var queryTerms = this.ParseQuery(query);
-            
-            var firstDocument = this.documents.First();
-            var bestMatch = new SearchResult(firstDocument, this.CalculateRelevanceScore(queryTerms, firstDocument));
 
-            this.documents.Skip(1).ForEach(doc =>
-            {
-                var relevanceScore = this.CalculateRelevanceScore(queryTerms, doc);
-
-                if (relevanceScore > bestMatch.RelevanceScore)
-                    bestMatch = new SearchResult(doc, relevanceScore);
-            });
-            
-            return bestMatch;
-        }
-
-        private double CalculateLogProbabilityRelevanceScore(IEnumerable<string> queryTerms, Document document)
-        {
-            double smoothingCoefficient = 0.5;
-            double unknownWordPenalty = -10;
-
-            var similariy = queryTerms.Aggregate<string, double>(0, (sum, term) =>
-            {
-                var probability = ((1 - smoothingCoefficient) * document.Model.Query(term)) +
-                    smoothingCoefficient * this.corpusLanguageModel.Query(term);
-
-                if (probability > 0)
-                    sum += Math.Log(probability);
-                else
-                    sum += unknownWordPenalty;
-                
-                return sum;
-            });
-
-            return similariy;
+            return this.documents
+                .Select(doc => new SearchResult(doc, this.CalculateRelevanceScore(queryTerms, doc)))
+                .Where(x => x.RelevanceScore > 0)
+                .OrderByDescending(x => x.RelevanceScore)
+                .Take(limit);
         }
 
         private double CalculateRelevanceScore(IEnumerable<string> queryTerms, Document document)
@@ -94,10 +66,8 @@
 
             var similariy = queryTerms.Aggregate<string, double>(1, (product, term) =>
             {
-                product *= ((1 - smoothingCoefficient) * document.Model.Query(term)) +
-                    smoothingCoefficient * this.corpusLanguageModel.Query(term);
-
-                return product;
+                return product * (((1 - smoothingCoefficient) * document.Model.Query(term)) +
+                    smoothingCoefficient * this.corpusLanguageModel.Query(term));
             });
 
             return similariy;
