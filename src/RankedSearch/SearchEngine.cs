@@ -25,6 +25,8 @@
             this.tokenizer = new StemmingTokenizer(stemmer);
         }
 
+        public int DocumentsCount => this.documents.Count();
+
         public void LoadDocuments(string directoryPath)
         {
             var result = new List<Document>();
@@ -62,7 +64,7 @@
 
         private double CalculateKullbackLeibrerDivergence(ILanguageModel queryLM, ILanguageModel documentLM)
         {
-            double result = 0;
+            var result = 0.0;
 
             documentLM.NGrams.ForEach(term =>
             {
@@ -78,8 +80,8 @@
 
         private double CalculateMaximumLikelihoodEstimate(IEnumerable<string> queryTerms, Document document)
         {
-            double smoothingCoefficient = 0.5;
-            double result = 1;
+            var smoothingCoefficient = 0.5;
+            var result = 1.0;
 
             queryTerms.ForEach(term =>
             {

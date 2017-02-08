@@ -7,7 +7,7 @@
     [TestClass]
     public class EnglishStemmerTests
     {
-        private IStemmer stemmer = new EnglishStemmer();
+        private readonly IStemmer stemmer = new EnglishStemmer();
 
         [TestMethod]
         public void InvokingTheConstructor_WithNoArguments_ShouldReturnNewInstance()

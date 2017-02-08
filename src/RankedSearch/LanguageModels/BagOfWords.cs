@@ -1,6 +1,7 @@
 ﻿namespace RankedSearch.LanguageModels
 {
     using Extensions;
+    using System;
     using System.Collections.Generic;
     using System.Linq;
 
@@ -9,21 +10,24 @@
     /// </summary>
     public class BagOfWords : ILanguageModel
     {
-        private readonly IDictionary<string, int> termFrequencies;
-        private int totalTermCount = 0;
+        private readonly IDictionary<string, int> unigramFrequencies;
+        private int totalCount = 0;
         
         public BagOfWords(IEnumerable<string> text)
         {
-            this.termFrequencies = this.InferDistribution(text);
-            this.totalTermCount = text.Count();
+            if (text == null)
+                throw new NullReferenceException("Text cannot be null.");
+
+            this.unigramFrequencies = this.InferDistribution(text);
+            this.totalCount = text.Count();
         }
 
-        public IEnumerable<string> NGrams => termFrequencies.Keys;
+        public IEnumerable<string> NGrams => unigramFrequencies.Keys;
 
         public double Query(string phrase)
         {
-            if (this.termFrequencies.ContainsKey(phrase))
-                return (double)this.termFrequencies[phrase] / this.totalTermCount;
+            if (this.unigramFrequencies.ContainsKey(phrase))
+                return (double)this.unigramFrequencies[phrase] / this.totalCount;
             
             return 0;
         }

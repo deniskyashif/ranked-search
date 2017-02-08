@@ -16,6 +16,13 @@ namespace RankedSearch.Tests
         }
 
         [TestMethod]
+        [ExpectedException(typeof(NullReferenceException))]
+        public void InvokingTheConstructor_WithProvidingNullArgument_ShouldThrowAnException()
+        {
+            var model = new BagOfWords(null);
+        }
+
+        [TestMethod]
         public void CreatingAnInstance_WithProvidingEnumerableOfStrings_ShouldInferCorrectDistribution1()
         {
             var model = new BagOfWords(new[] { "I", "run", "and", "run" });
