@@ -7,6 +7,5 @@
         IEnumerable<string> NGrams { get; }
 
         double Query(string phrase);
-        
     }
 }

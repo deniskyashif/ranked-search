@@ -5,10 +5,12 @@
     using System;
     using System.Configuration;
     using Extensions;
+    using System.Collections.Generic;
+    using RankedSearch.Poco;
 
     public class Program
     {
-        private static readonly string decorationLine = string.Empty.PadLeft(40, '-');
+        private static readonly string decorationLine = string.Empty.PadLeft(100, '-');
 
         public static void Main()
         {
@@ -23,21 +25,33 @@
             while (true)
             {
                 Console.Write(">_ ");
+
+                var query = Console.ReadLine();
                 
-                var input = Console.ReadLine();
-                var result = engine.Search(input, 1);
-
-                Console.WriteLine(decorationLine);
-                Console.WriteLine($"Results for query \"{input}\":");
-                Console.WriteLine(decorationLine);
-
-                result.ForEach(doc =>
+                try
                 {
-                    Console.WriteLine(doc.Document.Title);
-                    Console.WriteLine($"Relevance Score: {doc.RelevanceScore}");
-                    Console.WriteLine($"Body: {Environment.NewLine}{doc.Document.Body}");
-                });
+                    var searchResults = engine.Search(query, 3);
+                    PrintResults(query, searchResults);
+                }
+                catch (ArgumentException ex)
+                {
+                    Console.WriteLine($"Error: {ex.Message}");
+                }
             }
+        }
+
+        private static void PrintResults(string query, IEnumerable<SearchResult> searchResult)
+        {
+            Console.WriteLine(decorationLine);
+            Console.WriteLine($"Results for query \"{query}\":");
+            Console.WriteLine(decorationLine);
+
+            searchResult.ForEach(sr =>
+            {
+                Console.WriteLine($"Title: {sr.Document.Title} Id: {sr.Document.Id}");
+                Console.WriteLine($"Relevance Score: {sr.RelevanceScore}");
+                Console.WriteLine($"Body: {Environment.NewLine}{sr.Document.Body}");
+            });
         }
     }
 }

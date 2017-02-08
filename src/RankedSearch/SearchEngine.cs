@@ -53,6 +53,9 @@
 
         public IEnumerable<SearchResult> Search(string query, int limit = 5)
         {
+            if (!this.IsQueryValid(query))
+                throw new ArgumentException("The provided query is invalid.");
+
             var queryLM = new BagOfWords(this.TokenizeQuery(query));
 
             return this.documents
@@ -95,6 +98,11 @@
         private IEnumerable<string> TokenizeQuery(string query)
         {
             return this.tokenizer.Tokenize(query);
+        }
+
+        private bool IsQueryValid(string query)
+        {
+            return !string.IsNullOrWhiteSpace(query) && query.IsNormalized();
         }
     }
 }
