@@ -13,9 +13,9 @@
 
         public string Date { get; set; }
 
-        public IEnumerable<string> Topics { get; set; }
-
-        public IEnumerable<string> Places { get; set; }
+        public IEnumerable<string> Topics { get; set; } = new List<string>();
+        
+        public IEnumerable<string> Places { get; set; } = new List<string>();
 
         public ILanguageModel LanguageModel { get; set; }
     }

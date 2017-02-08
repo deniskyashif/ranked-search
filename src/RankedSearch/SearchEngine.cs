@@ -39,8 +39,13 @@
                     .Where(doc => doc.Body != null && doc.Body.Length > 0)
                     .Select(doc =>
                     {
-                        var tokeinzedDocumentContent = this.tokenizer.Tokenize($"{doc.Title} {doc.Body}");
+                        var content = $"{doc.Title} {doc.Body} " +
+                            $"{string.Join(" ", doc.Places)} " +
+                            $"{string.Join(" ", doc.Topics)}";
+
+                        var tokeinzedDocumentContent = this.tokenizer.Tokenize(content);
                         doc.LanguageModel = new BagOfWords(tokeinzedDocumentContent);
+
                         corpusText.AddRange(tokeinzedDocumentContent);
 
                         return doc;
