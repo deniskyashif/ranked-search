@@ -9,7 +9,7 @@
     {
         private readonly IStemmer stemmer;
         private readonly string[] separators = new string[] 
-            { " ", "\t", ",", ".", "?", "!", ":", "/", "-", "(", ")", "<", ">", Environment.NewLine };
+            { " ", "\t", ",", ".", "?", "!", ":", "/", "-", "(", ")", "<", ">", "+", Environment.NewLine };
         
         public StemmingTokenizer(IStemmer stemmer)
         {

@@ -38,7 +38,7 @@
                     .Select(doc =>
                     {
                         var tokeinzedDocumentContent = this.tokenizer.Tokenize($"{doc.Title} {doc.Body}");
-                        doc.Model = new BagOfWords(tokeinzedDocumentContent);
+                        doc.LanguageModel = new BagOfWords(tokeinzedDocumentContent);
                         corpusText.AddRange(tokeinzedDocumentContent);
 
                         return doc;
@@ -51,29 +51,46 @@
 
         public IEnumerable<SearchResult> Search(string query, int limit = 5)
         {
-            var queryTerms = this.ParseQuery(query);
+            var queryLM = new BagOfWords(this.TokenizeQuery(query));
 
             return this.documents
-                .Select(doc => new SearchResult(doc, this.CalculateRelevanceScore(queryTerms, doc)))
+                .Select(d => new SearchResult(d, this.CalculateKullbackLeibrerDivergence(queryLM, d.LanguageModel)))
                 .Where(x => x.RelevanceScore > 0)
                 .OrderByDescending(x => x.RelevanceScore)
                 .Take(limit);
         }
 
-        private double CalculateRelevanceScore(IEnumerable<string> queryTerms, Document document)
+        private double CalculateKullbackLeibrerDivergence(ILanguageModel queryModel, ILanguageModel documentModel)
         {
-            double smoothingCoefficient = 0.5;
+            double result = 0;
 
-            var similariy = queryTerms.Aggregate<string, double>(1, (product, term) =>
+            foreach (var term in documentModel.Terms)
             {
-                return product * (((1 - smoothingCoefficient) * document.Model.Query(term)) +
-                    smoothingCoefficient * this.corpusLanguageModel.Query(term));
-            });
+                var queryLMProbability = queryModel.Query(term);
+                var docLMProbability = documentModel.Query(term);
 
-            return similariy;
+                if (queryLMProbability > 0)
+                    result += (queryLMProbability * Math.Log(queryLMProbability / docLMProbability));
+            }
+
+            return result;
         }
 
-        private IEnumerable<string> ParseQuery(string query)
+        private double CalculateMaximumLikelihoodScore(IEnumerable<string> queryTerms, Document document)
+        {
+            double smoothingCoefficient = 0.5;
+            double result = 1;
+
+            foreach (var term in queryTerms)
+            {
+                result *= (((1 - smoothingCoefficient) * document.LanguageModel.Query(term)) +
+                    smoothingCoefficient * this.corpusLanguageModel.Query(term));
+            }
+
+            return result;
+        }
+
+        private IEnumerable<string> TokenizeQuery(string query)
         {
             return query.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)
                 .Select(tokenizer.NormalizeToken);

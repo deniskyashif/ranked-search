@@ -17,6 +17,6 @@
 
         public IEnumerable<string> Places { get; set; }
 
-        public ILanguageModel Model { get; set; }
+        public ILanguageModel LanguageModel { get; set; }
     }
 }

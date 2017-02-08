@@ -9,39 +9,38 @@
     /// </summary>
     public class BagOfWords : ILanguageModel
     {
-        private readonly IDictionary<string, double> distribution;
+        private readonly IDictionary<string, int> termFrequencies;
+        private int totalTermCount = 0;
         
         public BagOfWords(IEnumerable<string> text)
         {
-            this.distribution = this.InferDistribution(text);
+            this.termFrequencies = this.InferDistribution(text);
+            this.totalTermCount = text.Count();
         }
+
+        public IEnumerable<string> Terms => termFrequencies.Keys;
 
         public double Query(string phrase)
         {
-            if (this.distribution.ContainsKey(phrase))
-                return this.distribution[phrase];
+            if (this.termFrequencies.ContainsKey(phrase))
+                return (double)this.termFrequencies[phrase] / this.totalTermCount;
             
             return 0;
         }
         
-        private IDictionary<string, double> InferDistribution(IEnumerable<string> tokens)
+        private IDictionary<string, int> InferDistribution(IEnumerable<string> tokens)
         {
-            var counts = new Dictionary<string, double>();
+            var result = new Dictionary<string, int>();
 
             tokens.ForEach(token =>
             {
-                if (!counts.ContainsKey(token))
-                    counts.Add(token, 0);
+                if (!result.ContainsKey(token))
+                    result.Add(token, 0);
                 
-                counts[token]++;
+                result[token]++;
             });
-
-            var totalCount = tokens.Count();
-            var distribution = new Dictionary<string, double>();
-
-            counts.ForEach(pair => distribution.Add(pair.Key, pair.Value / totalCount));
-
-            return distribution;
+            
+            return result;
         }
     }
 }

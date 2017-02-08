@@ -8,6 +8,8 @@
 
     public class Program
     {
+        private static readonly string decorationLine = string.Empty.PadLeft(40, '-');
+
         public static void Main()
         {
             var corpusDirectory = ConfigurationManager.AppSettings["corpusPath"];
@@ -23,7 +25,11 @@
                 Console.Write(">_ ");
                 
                 var input = Console.ReadLine();
-                var result = engine.Search(input, 3);
+                var result = engine.Search(input, 1);
+
+                Console.WriteLine(decorationLine);
+                Console.WriteLine($"Results for query \"{input}\":");
+                Console.WriteLine(decorationLine);
 
                 result.ForEach(doc =>
                 {
