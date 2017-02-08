@@ -20,7 +20,7 @@
         public SearchEngine(IStemmer stemmer)
         {
             if (stemmer == null)
-                throw new NullReferenceException("Stemmer cannot be null.");
+                throw new NullReferenceException("A valid stemmer should be provided.");
 
             this.tokenizer = new StemmingTokenizer(stemmer);
         }
@@ -60,40 +60,39 @@
                 .Take(limit);
         }
 
-        private double CalculateKullbackLeibrerDivergence(ILanguageModel queryModel, ILanguageModel documentModel)
+        private double CalculateKullbackLeibrerDivergence(ILanguageModel queryLM, ILanguageModel documentLM)
         {
             double result = 0;
 
-            foreach (var term in documentModel.Terms)
+            documentLM.NGrams.ForEach(term =>
             {
-                var queryLMProbability = queryModel.Query(term);
-                var docLMProbability = documentModel.Query(term);
+                var queryLMProbability = queryLM.Query(term);
+                var docLMProbability = documentLM.Query(term);
 
                 if (queryLMProbability > 0)
                     result += (queryLMProbability * Math.Log(queryLMProbability / docLMProbability));
-            }
+            });
 
             return result;
         }
 
-        private double CalculateMaximumLikelihoodScore(IEnumerable<string> queryTerms, Document document)
+        private double CalculateMaximumLikelihoodEstimate(IEnumerable<string> queryTerms, Document document)
         {
             double smoothingCoefficient = 0.5;
             double result = 1;
 
-            foreach (var term in queryTerms)
+            queryTerms.ForEach(term =>
             {
                 result *= (((1 - smoothingCoefficient) * document.LanguageModel.Query(term)) +
                     smoothingCoefficient * this.corpusLanguageModel.Query(term));
-            }
+            });
 
             return result;
         }
 
         private IEnumerable<string> TokenizeQuery(string query)
         {
-            return query.Split(new string[] { " " }, StringSplitOptions.RemoveEmptyEntries)
-                .Select(tokenizer.NormalizeToken);
+            return this.tokenizer.Tokenize(query);
         }
     }
 }

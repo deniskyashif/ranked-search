@@ -3,6 +3,7 @@ namespace RankedSearch.Tests
     using System;
     using Microsoft.VisualStudio.TestTools.UnitTesting;
     using RankedSearch.LanguageModels;
+    using System.Linq;
 
     [TestClass]
     public class BagOfWordsTests
@@ -100,6 +101,34 @@ namespace RankedSearch.Tests
         public void CreatingAnInstance_WithProvidingAnNullArgument_ShouldThrowException()
         {
             var model = new BagOfWords(null);
+        }
+
+        [TestMethod]
+        public void AccessingTermsProperty_ShouldReturnAllTheDistinctTerms1()
+        {
+            var model = new BagOfWords(new [] { "like", "love", "live", "like"});
+            CollectionAssert.AreEqual(new[] { "like", "love", "live" }, model.NGrams.ToList());
+        }
+
+        [TestMethod]
+        public void AccessingTermsProperty_ShouldReturnAllTheDistinctTerms2()
+        {
+            var model = new BagOfWords(new [] { "like", "love", "live", "lime" });
+            CollectionAssert.AreEqual(new[] { "like", "love", "live", "lime" }, model.NGrams.ToList());
+        }
+
+        [TestMethod]
+        public void AccessingTermsProperty_ShouldReturnAllTheDistinctTerms3()
+        {
+            var model = new BagOfWords(new string[] { });
+            CollectionAssert.AreEqual(new string[] { }, model.NGrams.ToList());
+        }
+
+        [TestMethod]
+        public void AccessingTermsProperty_ShouldReturnAllTheDistinctTerms4()
+        {
+            var model = new BagOfWords(new string[] { "search", "search", "-1" });
+            CollectionAssert.AreEqual(new string[] { "search", "-1" }, model.NGrams.ToList());
         }
     }
 }

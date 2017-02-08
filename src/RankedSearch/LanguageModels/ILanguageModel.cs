@@ -4,7 +4,7 @@
 
     public interface ILanguageModel
     {
-        IEnumerable<string> Terms { get; }
+        IEnumerable<string> NGrams { get; }
 
         double Query(string phrase);
         

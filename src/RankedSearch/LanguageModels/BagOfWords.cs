@@ -18,7 +18,7 @@
             this.totalTermCount = text.Count();
         }
 
-        public IEnumerable<string> Terms => termFrequencies.Keys;
+        public IEnumerable<string> NGrams => termFrequencies.Keys;
 
         public double Query(string phrase)
         {
