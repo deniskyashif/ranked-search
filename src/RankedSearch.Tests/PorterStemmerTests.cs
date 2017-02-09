@@ -5,7 +5,7 @@
     using RankedSearch.Stemmers;
 
     [TestClass]
-    public class EnglishStemmerTests
+    public class PorterStemmerTests
     {
         private readonly IStemmer stemmer = new PorterStemmer();
 
