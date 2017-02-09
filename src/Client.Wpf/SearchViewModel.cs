@@ -1,15 +1,11 @@
 ﻿namespace Client.Wpf
 {
-    using Iveonik.Stemmers;
     using RankedSearch;
     using RankedSearch.Poco;
+    using RankedSearch.Stemmers;
     using System;
-    using System.Collections.Generic;
     using System.Collections.ObjectModel;
     using System.Configuration;
-    using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
     using System.Windows;
 
     public class SearchViewModel: DependencyObject
@@ -17,15 +13,30 @@
         private readonly string corpusPath = ConfigurationManager.AppSettings["corpusPath"];
         private readonly SearchEngine searchEngine;
 
+
+        // Using a DependencyProperty as the backing store for SearchResults.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty SearchResultsProperty =
+            DependencyProperty.Register("SearchResults", typeof(ObservableCollection<SearchResult>), typeof(SearchViewModel), new PropertyMetadata(null));
+
         public SearchViewModel()
         {
-            this.searchEngine = new SearchEngine(new EnglishStemmer());
+            this.searchEngine = new SearchEngine(new PorterStemmer());
             this.searchEngine.LoadDocuments(corpusPath);
+            this.DocumentCount = this.searchEngine.DocumentCount;
         }
+
+        public int DocumentCount { get; private set; }
 
         private void UpdateSearchResults()
         {
-            this.SearchResults = new ObservableCollection<SearchResult>(this.searchEngine.Search(this.SearchQuery));
+            try
+            {
+                this.SearchResults = new ObservableCollection<SearchResult>(this.searchEngine.Search(this.SearchQuery, 10));
+            }
+            catch (ArgumentException ex)
+            {
+                MessageBox.Show(ex.Message);
+            }
         }
 
         public ObservableCollection<SearchResult> SearchResults
@@ -34,10 +45,6 @@
             set { SetValue(SearchResultsProperty, value); }
         }
 
-        // Using a DependencyProperty as the backing store for SearchResults.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty SearchResultsProperty =
-            DependencyProperty.Register("SearchResults", typeof(ObservableCollection<SearchResult>), typeof(SearchViewModel), new PropertyMetadata(null));
-        
         public string SearchQuery
         {
             get { return (string)GetValue(SearchQueryProperty); }

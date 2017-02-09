@@ -1,19 +1,19 @@
 ﻿namespace RankedSearch.Tests
 {
     using Microsoft.VisualStudio.TestTools.UnitTesting;
-    using Iveonik.Stemmers;
     using System;
+    using RankedSearch.Stemmers;
 
     [TestClass]
     public class EnglishStemmerTests
     {
-        private readonly IStemmer stemmer = new EnglishStemmer();
+        private readonly IStemmer stemmer = new PorterStemmer();
 
         [TestMethod]
         public void InvokingTheConstructor_WithNoArguments_ShouldReturnNewInstance()
         {
-            var stemmer = new EnglishStemmer();
-            Assert.IsInstanceOfType(stemmer, typeof(EnglishStemmer));
+            var stemmer = new PorterStemmer();
+            Assert.IsInstanceOfType(stemmer, typeof(PorterStemmer));
         }
 
         [TestMethod]
@@ -33,7 +33,7 @@
         [TestMethod]
         public void Stemming_TheWordMoisturize_ShouldReturnMoistur()
         {
-            var stemmer = new EnglishStemmer();
+            var stemmer = new PorterStemmer();
             var actual = this.stemmer.Stem("moisturize");
             Assert.AreEqual("moistur", actual);
         }

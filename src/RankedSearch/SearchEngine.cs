@@ -1,10 +1,10 @@
 ﻿namespace RankedSearch
 {
     using Extensions;
-    using Iveonik.Stemmers;
     using Newtonsoft.Json;
     using RankedSearch.LanguageModels;
     using RankedSearch.Poco;
+    using RankedSearch.Stemmers;
     using RankedSearch.Tokenizers;
     using System;
     using System.Collections.Generic;
@@ -25,7 +25,7 @@
             this.tokenizer = new StemmingTokenizer(stemmer);
         }
 
-        public int DocumentsCount => this.documents.Count();
+        public int DocumentCount => this.documents.Count();
 
         public void LoadDocuments(string directoryPath)
         {
@@ -64,13 +64,13 @@
             var queryLM = new BagOfWords(this.TokenizeQuery(query));
 
             return this.documents
-                .Select(d => new SearchResult(d, this.CalculateKullbackLeibrerDivergence(queryLM, d.LanguageModel)))
+                .Select(d => new SearchResult(d, this.CalculateKullbackLeiblerDivergence(queryLM, d.LanguageModel)))
                 .Where(x => x.RelevanceScore > 0)
                 .OrderByDescending(x => x.RelevanceScore)
                 .Take(limit);
         }
 
-        private double CalculateKullbackLeibrerDivergence(ILanguageModel queryLM, ILanguageModel documentLM)
+        private double CalculateKullbackLeiblerDivergence(ILanguageModel queryLM, ILanguageModel documentLM)
         {
             var result = 0.0;
 

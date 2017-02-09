@@ -1,12 +1,12 @@
 ﻿namespace Client.Console
 {
-    using Iveonik.Stemmers;
     using RankedSearch;
     using System;
     using System.Configuration;
     using Extensions;
     using System.Collections.Generic;
     using RankedSearch.Poco;
+    using RankedSearch.Stemmers;
 
     public class Program
     {
@@ -17,7 +17,7 @@
             var corpusDirectory = ConfigurationManager.AppSettings["corpusPath"];
 
             Console.WriteLine("Creating the search engine...");
-            var engine = new SearchEngine(new EnglishStemmer());
+            var engine = new SearchEngine(new PorterStemmer());
 
             Console.WriteLine("Loading the documents...");
             engine.LoadDocuments(corpusDirectory);

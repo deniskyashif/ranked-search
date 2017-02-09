@@ -18,6 +18,10 @@
     <Grid>
         <materialDesign:Card Padding="32" Margin="16">
             <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <Label Content="Corpus size:" />
+                    <Label Content="{Binding DocumentCount}" />
+                </StackPanel>
                 <TextBox  x:Name="NameTextBox" materialDesign:HintAssist.Hint="Search Text" Text="{Binding SearchQuery, Mode=TwoWay}" FontSize="20" MaxLength="500" />
                 <Button Content="Search" Click="Button_Click" />
                 <ScrollViewer Height="600">
@@ -26,7 +30,7 @@
                             <DataTemplate DataType="searchEngine: SearchResult">
                                 <Expander HorizontalAlignment="Stretch" Header="{Binding Document.Title}">
                                     <StackPanel>
-                                        <Label Content="{Binding RelevanceScore}" />
+                                        <Label Content="{Binding RelevanceScore}"/>
                                         <TextBox Text="{Binding Document.Body}" IsReadOnly="True" />
                                     </StackPanel>
                                 </Expander>

@@ -1,6 +1,6 @@
 ﻿namespace RankedSearch.Tokenizers
 {
-    using Iveonik.Stemmers;
+    using RankedSearch.Stemmers;
     using System;
     using System.Collections.Generic;
     using System.Linq;
