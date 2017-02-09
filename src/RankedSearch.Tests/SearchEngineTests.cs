@@ -56,7 +56,7 @@
         {
             var engine = new SearchEngine(new PorterStemmer());
             engine.LoadDocuments(this.testCorpusPath);
-            var best = engine.Search("BankAmerica proposed equity offering", 1).First();
+            var best = engine.Search("BankAmerica Daniel Williams", 1).First();
 
             Assert.AreEqual("4", best.Document.Id);
         }
@@ -86,7 +86,7 @@
         {
             var engine = new SearchEngine(new PorterStemmer());
             engine.LoadDocuments(this.testCorpusPath);
-            var best = engine.Search("sale conditions occur warrants Switzerland", 1).First();
+            var best = engine.Search("COMPUTER TERMINAL SYSTEMS", 1).First();
 
             Assert.AreEqual("10", best.Document.Id);
         }
@@ -98,7 +98,7 @@
             engine.LoadDocuments(this.testCorpusPath);
             var best = engine.Search("stock split", 1).First();
 
-            Assert.AreEqual("9", best.Document.Id);
+            Assert.AreEqual("4", best.Document.Id);
         }
     }
 }
