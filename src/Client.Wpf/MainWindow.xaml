@@ -1,12 +1,40 @@
 ﻿<Window x:Class="Client.Wpf.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:searchEngine="clr-namespace:RankedSearch.Poco;assembly=RankedSearch"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Client.Wpf"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        TextElement.Foreground="{DynamicResource MaterialDesignBody}"
+        TextElement.FontWeight="Regular"
+        TextElement.FontSize="13"
+        TextOptions.TextFormattingMode="Ideal" 
+        TextOptions.TextRenderingMode="Auto"
+        Background="{DynamicResource MaterialDesignPaper}"
+        FontFamily="{DynamicResource MaterialDesignFont}"
+        Title="Ranked Search WPF" Height="750" Width="750">
     <Grid>
-        
+        <materialDesign:Card Padding="32" Margin="16">
+            <StackPanel>
+                <TextBox  x:Name="NameTextBox" materialDesign:HintAssist.Hint="Search Text" Text="{Binding SearchQuery, Mode=TwoWay}" FontSize="20" MaxLength="500" />
+                <Button Content="Search" Click="Button_Click" />
+                <ScrollViewer Height="600">
+                    <ItemsControl ItemsSource="{Binding SearchResults}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="searchEngine: SearchResult">
+                                <Expander HorizontalAlignment="Stretch" Header="{Binding Document.Title}">
+                                    <StackPanel>
+                                        <Label Content="{Binding RelevanceScore}" />
+                                        <TextBox Text="{Binding Document.Body}" IsReadOnly="True" />
+                                    </StackPanel>
+                                </Expander>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+        </materialDesign:Card>
     </Grid>
 </Window>
