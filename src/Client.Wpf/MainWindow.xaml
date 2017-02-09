@@ -16,22 +16,25 @@
         FontFamily="{DynamicResource MaterialDesignFont}"
         Title="Ranked Search WPF" Height="750" Width="750">
     <Grid>
-        <materialDesign:Card Padding="32" Margin="16">
+        <materialDesign:Card Padding="32" Margin="15">
             <StackPanel>
                 <StackPanel Orientation="Horizontal">
-                    <Label Content="Corpus size:" />
-                    <Label Content="{Binding DocumentCount}" />
+                    <Label Content="Corpus size:" Foreground="#673AB7"/>
+                    <Label Content="{Binding DocumentCount}" Foreground="#673AB7" />
                 </StackPanel>
                 <TextBox  x:Name="NameTextBox" materialDesign:HintAssist.Hint="Search Text" Text="{Binding SearchQuery, Mode=TwoWay}" FontSize="20" MaxLength="500" />
-                <Button Content="Search" Click="Button_Click" />
+                <Button Content="Search" Click="Button_Click" Margin="5" />
                 <ScrollViewer Height="600">
                     <ItemsControl ItemsSource="{Binding SearchResults}">
                         <ItemsControl.ItemTemplate>
                             <DataTemplate DataType="searchEngine: SearchResult">
                                 <Expander HorizontalAlignment="Stretch" Header="{Binding Document.Title}">
                                     <StackPanel>
-                                        <Label Content="{Binding RelevanceScore}"/>
-                                        <TextBox Text="{Binding Document.Body}" IsReadOnly="True" />
+                                        <StackPanel Orientation="Horizontal">
+                                            <Label Content="Relevance Score:" Foreground="#673AB7" />
+                                            <Label Content="{Binding RelevanceScore}" Foreground="#673AB7" />
+                                        </StackPanel>
+                                        <TextBox Text="{Binding Document.Body}" IsReadOnly="True" Padding="10" />
                                     </StackPanel>
                                 </Expander>
                             </DataTemplate>

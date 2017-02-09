@@ -13,6 +13,8 @@
 
     public class SearchEngine
     {
+        private const int MinDocBodyLength = 1;
+
         private readonly ITokenizer tokenizer;
         private IEnumerable<Document> documents;
         private ILanguageModel corpusLanguageModel;
@@ -36,12 +38,12 @@
             {
                 result.AddRange(
                     JsonConvert.DeserializeObject<IEnumerable<Document>>(File.ReadAllText(filePath))
-                    .Where(doc => doc.Body != null && doc.Body.Length > 0)
+                    .Where(doc => doc.Body != null && doc.Body.Length > MinDocBodyLength)
                     .Select(doc =>
                     {
-                        var content = $"{doc.Title} {doc.Body} " +
-                            $"{string.Join(" ", doc.Places)} " +
-                            $"{string.Join(" ", doc.Topics)}";
+                        var content = $"{doc.Title} {doc.Body} ";
+                                        //$"{string.Join(" ", doc.Topics)}" +
+                                        //$"{string.Join(" ", doc.Places)}";
 
                         var tokeinzedDocumentContent = this.tokenizer.Tokenize(content);
                         doc.LanguageModel = new BagOfWords(tokeinzedDocumentContent);
@@ -61,25 +63,26 @@
             if (!this.IsQueryValid(query))
                 throw new ArgumentException("The provided query is invalid.");
 
-            var queryLM = new BagOfWords(this.TokenizeQuery(query));
+            var queryTerms = this.TokenizeQuery(query);
+            var queryLM = new BagOfWords(queryTerms);
 
             return this.documents
                 .Select(d => new SearchResult(d, this.CalculateKullbackLeiblerDivergence(queryLM, d.LanguageModel)))
                 .Where(x => x.RelevanceScore > 0)
-                .OrderByDescending(x => x.RelevanceScore)
+                .OrderBy(x => x.RelevanceScore)
                 .Take(limit);
         }
-
+        
         private double CalculateKullbackLeiblerDivergence(ILanguageModel queryLM, ILanguageModel documentLM)
         {
             var result = 0.0;
 
-            documentLM.NGrams.ForEach(term =>
+            queryLM.NGrams.ForEach(term =>
             {
                 var queryLMProbability = queryLM.Query(term);
                 var docLMProbability = documentLM.Query(term);
 
-                if (queryLMProbability > 0)
+                if (docLMProbability > 0)
                     result += (queryLMProbability * Math.Log(queryLMProbability / docLMProbability));
             });
 
