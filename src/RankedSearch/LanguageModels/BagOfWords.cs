@@ -26,9 +26,22 @@
 
         public double Query(string phrase)
         {
-            if (this.unigramFrequencies.ContainsKey(phrase))
-                return (double)this.unigramFrequencies[phrase] / this.totalCount;
+            var words = phrase.Split(' ');
+            var result = this.GetProbability(words.First());
+
+            words.Skip(1)?.ForEach(w =>
+            {
+                result *= this.GetProbability(w);
+            });
             
+            return result;
+        }
+
+        private double GetProbability(string word)
+        {
+            if (this.unigramFrequencies.ContainsKey(word))
+                return ((double)this.unigramFrequencies[word] / this.totalCount);
+
             return 0;
         }
         

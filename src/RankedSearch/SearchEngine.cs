@@ -42,8 +42,6 @@
                     .Select(doc =>
                     {
                         var content = $"{doc.Title} {doc.Body} ";
-                                        //$"{string.Join(" ", doc.Topics)}" +
-                                        //$"{string.Join(" ", doc.Places)}";
 
                         var tokeinzedDocumentContent = this.tokenizer.Tokenize(content);
                         doc.LanguageModel = new BagOfWords(tokeinzedDocumentContent);
@@ -58,7 +56,7 @@
             this.corpusLanguageModel = new BagOfWords(corpusText);
         }
 
-        public IEnumerable<SearchResult> Search(string query, int limit = 5)
+        public IEnumerable<SearchResult> Search(string query, int limit = 10)
         {
             if (!this.IsQueryValid(query))
                 throw new ArgumentException("The provided query is invalid.");
@@ -67,9 +65,9 @@
             var queryLM = new BagOfWords(queryTerms);
 
             return this.documents
-                .Select(d => new SearchResult(d, this.CalculateKullbackLeiblerDivergence(queryLM, d.LanguageModel)))
+                .Select(d => new SearchResult(d, this.CalculateMaximumLikelihoodEstimate(queryTerms, d)))
                 .Where(x => x.RelevanceScore > 0)
-                .OrderBy(x => x.RelevanceScore)
+                .OrderByDescending(x => x.RelevanceScore)
                 .Take(limit);
         }
         
@@ -81,6 +79,9 @@
             {
                 var queryLMProbability = queryLM.Query(term);
                 var docLMProbability = documentLM.Query(term);
+
+                if (docLMProbability == 0)
+                    docLMProbability = corpusLanguageModel.Query(term);
 
                 if (docLMProbability > 0)
                     result += (queryLMProbability * Math.Log(queryLMProbability / docLMProbability));
@@ -96,8 +97,14 @@
 
             queryTerms.ForEach(term =>
             {
-                result *= (((1 - smoothingCoefficient) * document.LanguageModel.Query(term)) +
+                var score = (((1 - smoothingCoefficient) * document.LanguageModel.Query(term)) +
                     smoothingCoefficient * this.corpusLanguageModel.Query(term));
+
+                if (score > 0)
+                {
+                    result *= score;
+                }
+                
             });
 
             return result;

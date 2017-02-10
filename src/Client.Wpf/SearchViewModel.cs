@@ -10,10 +10,10 @@
 
     public class SearchViewModel: DependencyObject
     {
+        private const int SearchResultsLimit = 50;
         private readonly string corpusPath = ConfigurationManager.AppSettings["corpusPath"];
         private readonly SearchEngine searchEngine;
-
-
+        
         // Using a DependencyProperty as the backing store for SearchResults.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SearchResultsProperty =
             DependencyProperty.Register("SearchResults", typeof(ObservableCollection<SearchResult>), typeof(SearchViewModel), new PropertyMetadata(null));
@@ -31,7 +31,8 @@
         {
             try
             {
-                this.SearchResults = new ObservableCollection<SearchResult>(this.searchEngine.Search(this.SearchQuery, 10));
+                this.SearchResults = new ObservableCollection<SearchResult>(
+                    this.searchEngine.Search(this.SearchQuery, SearchResultsLimit));
             }
             catch (ArgumentException ex)
             {
