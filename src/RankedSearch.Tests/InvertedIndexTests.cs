@@ -1,27 +1,27 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
-using RankedSearch.LanguageModels;
-using System.Collections.Generic;
-using System.Linq;
-
-namespace RankedSearch.Tests
+﻿namespace RankedSearch.Tests
 {
+    using System;
+    using Microsoft.VisualStudio.TestTools.UnitTesting;
+    using RankedSearch.LanguageModels;
+    using System.Collections.Generic;
+    using System.Linq;
+
     [TestClass]
     public class InvertedIndexTests
     {
         public IList<Document> Documents { get; set; }
 
-        [ClassInitialize]
+        [TestInitialize]
         public void PrepareTestData()
         {
-            this.Documents = new []
+            this.Documents = new[]
             {
-                new Document { Id = "1", LanguageModel = new BagOfWords(new [] { "a", "Man", "does", "the", "job" }) },
-                new Document { Id = "2", LanguageModel = new BagOfWords(new [] { "whatever", "you", "do" }) },
-                new Document { Id = "3", LanguageModel = new BagOfWords(new [] { "see", "go", "do" }) },
-                new Document { Id = "4", LanguageModel = new BagOfWords(new [] { "do", "me", "a", "favor" }) },
-                new Document { Id = "5", LanguageModel = new BagOfWords(new [] { "you", "turn", "on", "the", "lights" }) },
-                new Document { Id = "6", LanguageModel = new BagOfWords(new [] { "you", "give", "whatever", "you", "can" }) }
+                new Document { Id = "1", Title = "1", LanguageModel = new BagOfWords(new [] { "a", "Man", "does", "the", "job" }) },
+                new Document { Id = "2", Title = "2", LanguageModel = new BagOfWords(new [] { "whatever", "you", "do" }) },
+                new Document { Id = "3", Title = "3", LanguageModel = new BagOfWords(new [] { "see", "go", "do" }) },
+                new Document { Id = "4", Title = "4", LanguageModel = new BagOfWords(new [] { "do", "me", "a", "favor" }) },
+                new Document { Id = "5", Title = "5", LanguageModel = new BagOfWords(new [] { "you", "turn", "on", "the", "lights" }) },
+                new Document { Id = "6", Title = "6", LanguageModel = new BagOfWords(new [] { "you", "give", "whatever", "you", "can" }) }
             };
         }
 

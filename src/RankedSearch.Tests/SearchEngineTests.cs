@@ -42,7 +42,7 @@
         }
         
         [TestMethod]
-        public void Searching_ForNonExistentWord_ShouldReturnNoResults()
+        public void Searching_ForUnseenWord_ShouldReturnNoResults()
         {
             var engine = new SearchEngine(new PorterStemmer());
             engine.LoadDocuments(this.testCorpusPath);

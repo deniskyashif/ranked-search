@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace RankedSearch
+﻿namespace RankedSearch
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class InvertedIndex
     {
         // term -> df, tfds

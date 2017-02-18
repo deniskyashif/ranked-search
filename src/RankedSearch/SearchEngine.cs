@@ -42,18 +42,17 @@
                     .Select(doc =>
                     {
                         var content = $"{doc.Title} {doc.Body} ";
-
                         var tokeinzedDocumentContent = this.tokenizer.Tokenize(content);
-                        doc.LanguageModel = new BagOfWords(tokeinzedDocumentContent);
 
+                        doc.LanguageModel = new BagOfWords(tokeinzedDocumentContent);
                         corpusText.AddRange(tokeinzedDocumentContent);
 
                         return doc;
                     }));
             });
 
-            this.documents = result;
             this.corpusLanguageModel = new BagOfWords(corpusText);
+            this.documents = result;
         }
 
         public IEnumerable<SearchResult> Search(string query, int limit = 10)
@@ -65,12 +64,22 @@
             var queryLM = new BagOfWords(queryTerms);
 
             return this.documents
-                .Select(d => new SearchResult(d, this.CalculateMaximumLikelihoodEstimate(queryTerms, d)))
+                .Select(d => new SearchResult(d, this.CalculateKullbackLeiblerDivergence(queryLM, d.LanguageModel)))
                 .Where(x => x.RelevanceScore > 0)
-                .OrderByDescending(x => x.RelevanceScore)
+                .OrderBy(x => x.RelevanceScore)
                 .Take(limit);
         }
-        
+
+        private IEnumerable<string> TokenizeQuery(string query)
+        {
+            return this.tokenizer.Tokenize(query);
+        }
+
+        private bool IsQueryValid(string query)
+        {
+            return !string.IsNullOrWhiteSpace(query) && query.IsNormalized();
+        }
+
         private double CalculateKullbackLeiblerDivergence(ILanguageModel queryLM, ILanguageModel documentLM)
         {
             var result = 0.0;
@@ -108,16 +117,6 @@
             });
 
             return result;
-        }
-
-        private IEnumerable<string> TokenizeQuery(string query)
-        {
-            return this.tokenizer.Tokenize(query);
-        }
-
-        private bool IsQueryValid(string query)
-        {
-            return !string.IsNullOrWhiteSpace(query) && query.IsNormalized();
         }
     }
 }
