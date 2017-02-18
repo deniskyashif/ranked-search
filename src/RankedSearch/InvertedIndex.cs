@@ -20,12 +20,12 @@ namespace RankedSearch
             throw new NotImplementedException();
         }
 
-        public double GetInverseDocumentFrequency(string term)
+        public double GetDocumentFrequency(string term)
         {
             throw new NotImplementedException();
         }
 
-        public double GetDocumentFrequency(string term)
+        public double GetInverseDocumentFrequency(string term)
         {
             throw new NotImplementedException();
         }
