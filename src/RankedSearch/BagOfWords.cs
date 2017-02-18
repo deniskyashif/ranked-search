@@ -24,10 +24,20 @@
 
         public IEnumerable<string> DistinctTerms => termCounts.Keys;
 
-        public double GetTermFrequency(string term)
+        public int GetTermCount(string term)
         {
             if (this.termCounts.ContainsKey(term))
-                return ((double)this.termCounts[term] / this.totalTermCount);
+                return this.termCounts[term];
+
+            return 0;
+        }
+
+        public double GetTermFrequency(string term)
+        {
+            var termCount = this.GetTermCount(term);
+
+            if (termCount > 0)
+                return (double)termCount / totalTermCount;
 
             return 0;
         }
