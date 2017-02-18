@@ -27,7 +27,7 @@
         [TestMethod]
         public void CreatingAnInstance_WithProvidingEnumerableOfDocuments_ShouldCreateANewInstance()
         {
-            var invertedIndex = new InvertedIndex(new[] { new Document() });
+            var invertedIndex = new InvertedIndex(new[] { this.Documents[0] });
             Assert.IsInstanceOfType(invertedIndex, typeof(InvertedIndex));
         }
 
@@ -134,7 +134,7 @@
             var invertedIndex = new InvertedIndex(this.Documents);
             var actual = invertedIndex.GetDocumentFrequency("whatever");
 
-            Assert.AreEqual(1, actual);
+            Assert.AreEqual(2, actual);
         }
 
         [TestMethod]
@@ -160,8 +160,8 @@
         public void GettingTheInverseDocFrequency_ProvidingATerm_ShouldReturnCorrectResult2()
         {
             var invertedIndex = new InvertedIndex(this.Documents);
-            var expected = Math.Round(Math.Log(6 / 3));
-            var actual = Math.Round(invertedIndex.GetInverseDocumentFrequency("do"));
+            var expected = Math.Round(Math.Log(6 / 3), 2);
+            var actual = Math.Round(invertedIndex.GetInverseDocumentFrequency("do"), 2);
 
             Assert.AreEqual(expected, actual);
         }
@@ -170,8 +170,8 @@
         public void GettingTheInverseDocFrequency_ProvidingATerm_ShouldReturnCorrectResult3()
         {
             var invertedIndex = new InvertedIndex(this.Documents);
-            var expected = Math.Round(Math.Log(6 / 1));
-            var actual = invertedIndex.GetInverseDocumentFrequency("favor");
+            var expected = Math.Round(Math.Log(6 / 1), 2);
+            var actual = Math.Round(invertedIndex.GetInverseDocumentFrequency("favor"), 2);
 
             Assert.AreEqual(expected, actual);
         }
@@ -180,8 +180,8 @@
         public void GettingTheInverseDocFrequency_ProvidingATerm_ShouldReturnCorrectResult4()
         {
             var invertedIndex = new InvertedIndex(this.Documents);
-            var expected = Math.Round(Math.Log(6 / 2));
-            var actual = invertedIndex.GetInverseDocumentFrequency("a");
+            var expected = Math.Round(Math.Log(6 / 2), 2);
+            var actual = Math.Round(invertedIndex.GetInverseDocumentFrequency("a"), 2);
 
             Assert.AreEqual(expected, actual);
         }
@@ -190,8 +190,8 @@
         public void GettingTheInverseDocFrequency_ProvidingATerm_ShouldReturnCorrectResult5()
         {
             var invertedIndex = new InvertedIndex(this.Documents);
-            var expected = Math.Round(Math.Log(6 / 3));
-            var actual = invertedIndex.GetInverseDocumentFrequency("you");
+            var expected = Math.Round(Math.Log(6 / 3), 2);
+            var actual = Math.Round(invertedIndex.GetInverseDocumentFrequency("you"), 2);
 
             Assert.AreEqual(expected, actual);
         }

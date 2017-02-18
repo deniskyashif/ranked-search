@@ -1,5 +1,6 @@
 ﻿namespace RankedSearch
 {
+    using Extensions;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -43,7 +44,15 @@
 
         private IDictionary<string, IEnumerable<Document>> ConstructInvertedIndex(IEnumerable<Document> documents)
         {
-            throw new NotImplementedException();
+            var terms = documents
+                .Skip(1)
+                .Aggregate(documents.First().BagOfWords.DistinctTerms,
+                           (aggr, doc) => aggr.Union(doc.BagOfWords.DistinctTerms));
+
+            var result = new Dictionary<string, IEnumerable<Document>>();
+            terms.ForEach(term => result.Add(term, documents.Where(d => d.BagOfWords.GetTermCount(term) > 0)));
+
+            return result;
         }
     }
 }
