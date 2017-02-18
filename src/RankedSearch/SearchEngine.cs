@@ -2,7 +2,6 @@
 {
     using Extensions;
     using Newtonsoft.Json;
-    using RankedSearch.LanguageModels;
     using RankedSearch.Poco;
     using RankedSearch.Stemmers;
     using RankedSearch.Tokenizers;
@@ -17,7 +16,7 @@
 
         private readonly ITokenizer tokenizer;
         private IEnumerable<Document> documents;
-        private ILanguageModel corpusLanguageModel;
+        private BagOfWords corpusBagOfWords;
 
         public SearchEngine(IStemmer stemmer)
         {
@@ -44,14 +43,14 @@
                         var content = $"{doc.Title} {doc.Body} ";
                         var tokeinzedDocumentContent = this.tokenizer.Tokenize(content);
 
-                        doc.LanguageModel = new BagOfWords(tokeinzedDocumentContent);
+                        doc.BagOfWords = new BagOfWords(tokeinzedDocumentContent);
                         corpusText.AddRange(tokeinzedDocumentContent);
 
                         return doc;
                     }));
             });
 
-            this.corpusLanguageModel = new BagOfWords(corpusText);
+            this.corpusBagOfWords = new BagOfWords(corpusText);
             this.documents = result;
         }
 
@@ -64,7 +63,7 @@
             var queryLM = new BagOfWords(queryTerms);
 
             return this.documents
-                .Select(d => new SearchResult(d, this.CalculateKullbackLeiblerDivergence(queryLM, d.LanguageModel)))
+                .Select(d => new SearchResult(d, this.CalculateKullbackLeiblerDivergence(queryLM, d.BagOfWords)))
                 .Where(x => x.RelevanceScore > 0)
                 .OrderBy(x => x.RelevanceScore)
                 .Take(limit);
@@ -80,17 +79,17 @@
             return !string.IsNullOrWhiteSpace(query) && query.IsNormalized();
         }
 
-        private double CalculateKullbackLeiblerDivergence(ILanguageModel queryLM, ILanguageModel documentLM)
+        private double CalculateKullbackLeiblerDivergence(BagOfWords queryLM, BagOfWords documentLM)
         {
             var result = 0.0;
 
-            queryLM.NGrams.ForEach(term =>
+            queryLM.DistinctTerms.ForEach(term =>
             {
-                var queryLMProbability = queryLM.Query(term);
-                var docLMProbability = documentLM.Query(term);
+                var queryLMProbability = queryLM.GetTermFrequency(term);
+                var docLMProbability = documentLM.GetTermFrequency(term);
 
                 if (docLMProbability == 0)
-                    docLMProbability = corpusLanguageModel.Query(term);
+                    docLMProbability = corpusBagOfWords.GetTermFrequency(term);
 
                 if (docLMProbability > 0)
                     result += (queryLMProbability * Math.Log(queryLMProbability / docLMProbability));
@@ -106,8 +105,8 @@
 
             queryTerms.ForEach(term =>
             {
-                var score = (((1 - smoothingCoefficient) * document.LanguageModel.Query(term)) +
-                    smoothingCoefficient * this.corpusLanguageModel.Query(term));
+                var score = (((1 - smoothingCoefficient) * document.BagOfWords.GetTermFrequency(term)) +
+                    smoothingCoefficient * this.corpusBagOfWords.GetTermFrequency(term));
 
                 if (score > 0)
                 {

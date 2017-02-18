@@ -1,6 +1,6 @@
 ﻿namespace RankedSearch
 {
-    using RankedSearch.LanguageModels;
+    using RankedSearch;
     using System.Collections.Generic;
 
     public class Document
@@ -17,6 +17,6 @@
         
         public IEnumerable<string> Places { get; set; } = new List<string>();
 
-        public ILanguageModel LanguageModel { get; set; }
+        public BagOfWords BagOfWords { get; set; }
     }
 }

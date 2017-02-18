@@ -49,8 +49,7 @@
   <ItemGroup>
     <Compile Include="InvertedIndex.cs" />
     <Compile Include="Poco\Document.cs" />
-    <Compile Include="LanguageModels\BagOfWords.cs" />
-    <Compile Include="LanguageModels\ILanguageModel.cs" />
+    <Compile Include="BagOfWords.cs" />
     <Compile Include="Poco\SearchResult.cs" />
     <Compile Include="Stemmers\IStemmer.cs" />
     <Compile Include="Stemmers\PorterStemmer.cs" />
