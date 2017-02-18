@@ -26,7 +26,7 @@
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NullReferenceException))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void InvokingTheConstructor_WithProvidingNullArgument_ShouldThrowAnException()
         {
             var model = new SearchEngine(null);

@@ -22,7 +22,7 @@
         public SearchEngine(IStemmer stemmer)
         {
             if (stemmer == null)
-                throw new NullReferenceException("A valid stemmer should be provided.");
+                throw new ArgumentNullException("A valid stemmer should be provided.");
 
             this.tokenizer = new StemmingTokenizer(stemmer);
         }

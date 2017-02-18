@@ -16,7 +16,7 @@ namespace RankedSearch.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NullReferenceException))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void InvokingTheConstructor_WithProvidingNullArgument_ShouldThrowAnException()
         {
             var model = new BagOfWords(null);
@@ -104,7 +104,7 @@ namespace RankedSearch.Tests
         }
 
         [TestMethod]
-        [ExpectedException(typeof(NullReferenceException))]
+        [ExpectedException(typeof(ArgumentNullException))]
         public void CreatingAnInstance_WithProvidingAnNullArgument_ShouldThrowException()
         {
             var model = new BagOfWords(null);

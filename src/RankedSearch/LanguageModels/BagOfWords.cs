@@ -16,7 +16,7 @@
         public BagOfWords(IEnumerable<string> text)
         {
             if (text == null)
-                throw new NullReferenceException("Text cannot be null.");
+                throw new ArgumentNullException("Text cannot be null.");
 
             this.unigramFrequencies = this.InferDistribution(text);
             this.totalCount = text.Count();
