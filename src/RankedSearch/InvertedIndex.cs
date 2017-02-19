@@ -19,6 +19,19 @@
             this.invertedIndex = this.ConstructInvertedIndex(documents);
         }
 
+        public IEnumerable<Document> GetDocumentsContainingTerms(IEnumerable<string> terms)
+        {
+            var result = new HashSet<Document>();
+
+            terms.ForEach(term =>
+            {
+                var docsForTerms = this.GetDocumentsContainingTerm(term);
+                docsForTerms.ForEach(doc => result.Add(doc));
+            });
+
+            return result;
+        }
+
         public IEnumerable<Document> GetDocumentsContainingTerm(string term)
         {
             if (this.invertedIndex.ContainsKey(term))
@@ -44,10 +57,9 @@
 
         private IDictionary<string, IEnumerable<Document>> ConstructInvertedIndex(IEnumerable<Document> documents)
         {
-            var terms = documents
-                .Skip(1)
-                .Aggregate(documents.First().BagOfWords.DistinctTerms,
-                           (aggr, doc) => aggr.Union(doc.BagOfWords.DistinctTerms));
+            var terms = new HashSet<string>();
+            documents.ForEach(doc =>
+                doc.BagOfWords.DistinctTerms.ForEach(t => terms.Add(t)));
 
             var result = new Dictionary<string, IEnumerable<Document>>();
             terms.ForEach(term => result.Add(term, documents.Where(d => d.BagOfWords.GetTermCount(term) > 0)));

@@ -96,8 +96,8 @@
         {
             var engine = new SearchEngine(new PorterStemmer());
             engine.LoadDocuments(this.testCorpusPath);
-            var best = engine.Search("stock split", 1).First();
-
+            var best = engine.Search("Merrill Lynch", 1).First();
+            
             Assert.AreEqual("4", best.Document.Id);
         }
     }

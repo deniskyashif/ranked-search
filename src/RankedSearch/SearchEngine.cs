@@ -6,9 +6,11 @@
     using RankedSearch.Stemmers;
     using RankedSearch.Tokenizers;
     using System;
+    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
+    using System.Threading.Tasks;
 
     public class SearchEngine
     {
@@ -16,6 +18,7 @@
 
         private readonly ITokenizer tokenizer;
         private IEnumerable<Document> documents;
+        private InvertedIndex invertedIndex;
         private BagOfWords corpusBagOfWords;
 
         public SearchEngine(IStemmer stemmer)
@@ -30,19 +33,18 @@
 
         public void LoadDocuments(string directoryPath)
         {
-            var result = new List<Document>();
+            var documents = new List<Document>();
             var corpusText = new List<string>();
 
             Directory.EnumerateFiles(directoryPath).ForEach(filePath =>
             {
-                result.AddRange(
+                documents.AddRange(
                     JsonConvert.DeserializeObject<IEnumerable<Document>>(File.ReadAllText(filePath))
                     .Where(doc => doc.Body != null && doc.Body.Length > MinDocBodyLength)
                     .Select(doc =>
                     {
                         var content = $"{doc.Title} {doc.Body} ";
                         var tokeinzedDocumentContent = this.tokenizer.Tokenize(content);
-
                         doc.BagOfWords = new BagOfWords(tokeinzedDocumentContent);
                         corpusText.AddRange(tokeinzedDocumentContent);
 
@@ -50,8 +52,9 @@
                     }));
             });
 
+            this.documents = documents;
             this.corpusBagOfWords = new BagOfWords(corpusText);
-            this.documents = result;
+            this.invertedIndex = new InvertedIndex(documents);
         }
 
         public IEnumerable<SearchResult> Search(string query, int limit = 10)
@@ -61,14 +64,14 @@
 
             var queryTerms = this.TokenizeQuery(query);
             var queryLM = new BagOfWords(queryTerms);
-
-            return this.documents
-                .Select(d => new SearchResult(d, this.CalculateKullbackLeiblerDivergence(queryLM, d.BagOfWords)))
-                .Where(x => x.RelevanceScore > 0)
-                .OrderBy(x => x.RelevanceScore)
+            var relevantDocuments = this.invertedIndex.GetDocumentsContainingTerms(queryTerms);
+            
+            return relevantDocuments
+                .Select(doc => new SearchResult(doc, this.CalculateKullbackLeiblerDivergence(queryLM, doc.BagOfWords)))
+                .OrderByDescending(sr => sr.RelevanceScore)
                 .Take(limit);
         }
-
+        
         private IEnumerable<string> TokenizeQuery(string query)
         {
             return this.tokenizer.Tokenize(query);
@@ -89,7 +92,7 @@
                 var docLMProbability = documentLM.GetTermFrequency(term);
 
                 if (docLMProbability == 0)
-                    docLMProbability = corpusBagOfWords.GetTermFrequency(term);
+                    docLMProbability = this.corpusBagOfWords.GetTermFrequency(term);
 
                 if (docLMProbability > 0)
                     result += (queryLMProbability * Math.Log(queryLMProbability / docLMProbability));
@@ -98,24 +101,17 @@
             return result;
         }
 
-        private double CalculateMaximumLikelihoodEstimate(IEnumerable<string> queryTerms, Document document)
+        private double CalculateTfIdfRelevanceScore(IEnumerable<string> query, Document doc)
         {
-            var smoothingCoefficient = 0.5;
-            var result = 1.0;
+            return query.Aggregate(0.0, (sum, term) => sum += this.CalculateTfIdf(term, doc));
+        }
 
-            queryTerms.ForEach(term =>
-            {
-                var score = (((1 - smoothingCoefficient) * document.BagOfWords.GetTermFrequency(term)) +
-                    smoothingCoefficient * this.corpusBagOfWords.GetTermFrequency(term));
+        private double CalculateTfIdf(string term, Document doc)
+        {
+            var tf = doc.BagOfWords.GetTermFrequency(term);
+            var idf = this.invertedIndex.GetInverseDocumentFrequency(term);
 
-                if (score > 0)
-                {
-                    result *= score;
-                }
-                
-            });
-
-            return result;
+            return tf * idf;
         }
     }
 }
