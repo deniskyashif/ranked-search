@@ -65,6 +65,12 @@
             var queryTerms = this.TokenizeQuery(query).Distinct();
             var queryLM = new BagOfWords(queryTerms);
             var relevantDocuments = this.invertedIndex.GetDocumentsContainingTerms(queryTerms);
+
+            queryTerms.ForEach(term =>
+            {
+                if (!idfCache.ContainsKey(term))
+                    idfCache.Add(term, this.invertedIndex.GetInverseDocumentFrequency(term));
+            });
             
             return relevantDocuments
                 //.Select(doc => new SearchResult(doc, this.CalculateKullbackLeiblerDivergence(queryLM, doc.BagOfWords)))
@@ -109,13 +115,10 @@
             
             query.ForEach(term =>
             {
-                if (!idfCache.ContainsKey(term))
-                    idfCache.Add(term, this.invertedIndex.GetInverseDocumentFrequency(term));
-
                 var tf = doc.BagOfWords.GetTermFrequency(term);
                 var idf = idfCache[term];
-
                 var tfIdf = tf * idf;
+
                 result += tfIdf;
             });
 
