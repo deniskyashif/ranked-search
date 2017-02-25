@@ -6,11 +6,9 @@
     using RankedSearch.Stemmers;
     using RankedSearch.Tokenizers;
     using System;
-    using System.Collections.Concurrent;
     using System.Collections.Generic;
     using System.IO;
     using System.Linq;
-    using System.Threading.Tasks;
 
     public class SearchEngine
     {
@@ -20,6 +18,8 @@
         private IEnumerable<Document> documents;
         private InvertedIndex invertedIndex;
         private BagOfWords corpusBagOfWords;
+        private IDictionary<string, double> idfCache = new Dictionary<string, double>();
+
 
         public SearchEngine(IStemmer stemmer)
         {
@@ -62,12 +62,14 @@
             if (!this.IsQueryValid(query))
                 throw new ArgumentException("The provided query is invalid.");
 
-            var queryTerms = this.TokenizeQuery(query);
+            var queryTerms = this.TokenizeQuery(query).Distinct();
             var queryLM = new BagOfWords(queryTerms);
             var relevantDocuments = this.invertedIndex.GetDocumentsContainingTerms(queryTerms);
             
             return relevantDocuments
-                .Select(doc => new SearchResult(doc, this.CalculateKullbackLeiblerDivergence(queryLM, doc.BagOfWords)))
+                //.Select(doc => new SearchResult(doc, this.CalculateKullbackLeiblerDivergence(queryLM, doc.BagOfWords)))
+                //.OrderBy(sr => sr.RelevanceScore)
+                .Select(doc => new SearchResult(doc, this.CalculateTfIdfRelevanceScore(queryLM.DistinctTerms, doc)))
                 .OrderByDescending(sr => sr.RelevanceScore)
                 .Take(limit);
         }
@@ -103,15 +105,21 @@
 
         private double CalculateTfIdfRelevanceScore(IEnumerable<string> query, Document doc)
         {
-            return query.Aggregate(0.0, (sum, term) => sum += this.CalculateTfIdf(term, doc));
-        }
+            var result = 0.0;
+            
+            query.ForEach(term =>
+            {
+                if (!idfCache.ContainsKey(term))
+                    idfCache.Add(term, this.invertedIndex.GetInverseDocumentFrequency(term));
 
-        private double CalculateTfIdf(string term, Document doc)
-        {
-            var tf = doc.BagOfWords.GetTermFrequency(term);
-            var idf = this.invertedIndex.GetInverseDocumentFrequency(term);
+                var tf = doc.BagOfWords.GetTermFrequency(term);
+                var idf = idfCache[term];
 
-            return tf * idf;
+                var tfIdf = tf * idf;
+                result += tfIdf;
+            });
+
+            return result;
         }
     }
 }

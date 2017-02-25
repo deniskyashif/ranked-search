@@ -44,7 +44,7 @@
         {
             return this.GetDocumentsContainingTerm(term).Count();
         }
-
+        
         public double GetInverseDocumentFrequency(string term)
         {
             var docFrequency = this.GetDocumentFrequency(term);
@@ -58,6 +58,7 @@
         private IDictionary<string, IEnumerable<Document>> ConstructInvertedIndex(IEnumerable<Document> documents)
         {
             var terms = new HashSet<string>();
+
             documents.ForEach(doc =>
                 doc.BagOfWords.DistinctTerms.ForEach(t => terms.Add(t)));
 
