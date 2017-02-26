@@ -16,7 +16,10 @@
         
         // Using a DependencyProperty as the backing store for SearchResults.  This enables animation, styling, binding, etc...
         public static readonly DependencyProperty SearchResultsProperty =
-            DependencyProperty.Register("SearchResults", typeof(ObservableCollection<SearchResult>), typeof(SearchViewModel), new PropertyMetadata(null));
+            DependencyProperty.Register("SearchResults", 
+                typeof(ObservableCollection<SearchResult>), 
+                typeof(SearchViewModel), 
+                new PropertyMetadata(null));
 
         public SearchViewModel()
         {
