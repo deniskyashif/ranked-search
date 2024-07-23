@@ -1,6 +1,5 @@
 ﻿namespace RankedSearch
 {
-    using Extensions;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -46,13 +45,13 @@
         {
             var result = new Dictionary<string, int>();
 
-            tokens.ForEach(token =>
+            foreach (var token in tokens)
             {
                 if (!result.ContainsKey(token))
                     result.Add(token, 0);
                 
                 result[token]++;
-            });
+            }
             
             return result;
         }

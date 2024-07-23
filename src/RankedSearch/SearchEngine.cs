@@ -1,6 +1,5 @@
 ﻿namespace RankedSearch
 {
-    using Extensions;
     using Newtonsoft.Json;
     using RankedSearch.Poco;
     using RankedSearch.Stemmers;
@@ -23,7 +22,7 @@
 
         public SearchEngine(IStemmer stemmer)
         {
-            if (stemmer == null)
+            if (stemmer is null)
                 throw new ArgumentNullException("A valid stemmer should be provided.");
 
             this.tokenizer = new StemmingTokenizer(stemmer);
@@ -36,7 +35,7 @@
             var documents = new List<Document>();
             var corpusText = new List<string>();
 
-            Directory.EnumerateFiles(directoryPath).ForEach(filePath =>
+            foreach (var filePath in Directory.EnumerateFiles(directoryPath))
             {
                 documents.AddRange(
                     JsonConvert.DeserializeObject<IEnumerable<Document>>(File.ReadAllText(filePath))
@@ -50,7 +49,7 @@
 
                         return doc;
                     }));
-            });
+            }
 
             this.documents = documents;
             this.corpusBagOfWords = new BagOfWords(corpusText);
@@ -66,11 +65,11 @@
             var queryLM = new BagOfWords(queryTerms);
             var relevantDocuments = this.invertedIndex.GetDocumentsContainingTerms(queryTerms);
 
-            queryTerms.ForEach(term =>
+            foreach (var term in queryTerms)
             {
                 if (!idfCache.ContainsKey(term))
                     idfCache.Add(term, this.invertedIndex.GetInverseDocumentFrequency(term));
-            });
+            }
             
             return relevantDocuments
                 //.Select(doc => new SearchResult(doc, this.CalculateKullbackLeiblerDivergence(queryLM, doc.BagOfWords)))
@@ -94,7 +93,7 @@
         {
             var result = 0.0;
 
-            queryLM.DistinctTerms.ForEach(term =>
+            foreach (var term in queryLM.DistinctTerms)
             {
                 var queryLMProbability = queryLM.GetTermFrequency(term);
                 var docLMProbability = documentLM.GetTermFrequency(term);
@@ -104,7 +103,7 @@
 
                 if (docLMProbability > 0)
                     result += (queryLMProbability * Math.Log(queryLMProbability / docLMProbability));
-            });
+            }
 
             return result;
         }
@@ -112,15 +111,15 @@
         private double CalculateTfIdfRelevanceScore(IEnumerable<string> query, Document doc)
         {
             var result = 0.0;
-            
-            query.ForEach(term =>
+
+            foreach (var term in query)
             {
                 var tf = doc.BagOfWords.GetTermFrequency(term);
                 var idf = idfCache[term];
                 var tfIdf = tf * idf;
 
                 result += tfIdf;
-            });
+            }
 
             return result;
         }

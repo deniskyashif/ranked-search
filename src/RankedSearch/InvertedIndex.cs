@@ -1,6 +1,5 @@
 ﻿namespace RankedSearch
 {
-    using Extensions;
     using System;
     using System.Collections.Generic;
     using System.Linq;
@@ -23,11 +22,14 @@
         {
             var result = new HashSet<Document>();
 
-            terms.ForEach(term =>
+            foreach (var term in terms)
             {
                 var docsForTerms = this.GetDocumentsContainingTerm(term);
-                docsForTerms.ForEach(doc => result.Add(doc));
-            });
+                foreach (var doc in docsForTerms)
+                {
+                    result.Add(doc);
+				}
+            }
 
             return result;
         }
@@ -37,7 +39,7 @@
             if (this.invertedIndex.ContainsKey(term))
                 return this.invertedIndex[term];
 
-            return new Document[0];
+			return Array.Empty<Document>();
         }
 
         public double GetDocumentFrequency(string term)
@@ -59,11 +61,20 @@
         {
             var terms = new HashSet<string>();
 
-            documents.ForEach(doc =>
-                doc.BagOfWords.DistinctTerms.ForEach(t => terms.Add(t)));
+            foreach (var doc in documents)
+            {
+                foreach (var term in doc.BagOfWords.DistinctTerms)
+                {
+                    terms.Add(term);
+                }
+			}
 
             var result = new Dictionary<string, IEnumerable<Document>>();
-            terms.ForEach(term => result.Add(term, documents.Where(d => d.BagOfWords.GetTermCount(term) > 0)));
+
+            foreach (var term in terms)
+            {
+                result.Add(term, documents.Where(d => d.BagOfWords.GetTermCount(term) > 0));
+			}
 
             return result;
         }
