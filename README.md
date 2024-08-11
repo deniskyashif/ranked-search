@@ -13,4 +13,4 @@ git clone --recursive https://github.com/deniskyashif/ranked-search.git
 ```
 
 ### Dependencies
-* .NET Framework 4.5.2
+* .NET 8 LTS
